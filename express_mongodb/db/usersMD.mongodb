@@ -1,0 +1,27 @@
+use("md2023");
+db.createCollection("users");
+
+use("md2023");
+db.users.insertMany([
+    {
+        user: 'administrador',
+        pass: 321,
+        rol: 'admin',
+        estado: true
+    },
+    {
+        user: 'pedro',
+        pass: 'pedro',
+        rol: 'doctor',
+        estado: true
+    },
+    {
+        user: 'pepe',
+        pass: 'pepe',
+        rol: 'paciente',
+        estado: true
+    } 
+]);
+
+use("md2023");
+db.users.find();
