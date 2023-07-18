@@ -27,19 +27,14 @@ app.MapPost("/app/pacientes/add", (Paciente paciente) =>
 });
 
 //eliminar paciente por rut
-/*app.MapDelete("/app/pacientes/eliminar", (Paciente paciente) =>
+app.MapDelete("/app/pacientes/eliminar/{rut}", (string rut) =>
 {
-    System.Console.WriteLine(paciente.Rut);
     medical_dietContext db = new medical_dietContext();
-    var pacientess = db.Pacientes.FirstOrDefault(p => p.Rut == paciente.Rut);
-    System.Console.WriteLine(pacientess);
-    //db.Entry(pacientess).State = EntityState.Deleted;
-    int element = db.SaveChanges();
-    var lista = db.Pacientes.ToList();
-    return Results.Ok(lista);
+    var paciente = new Paciente { Rut = rut };
+    db.Entry(paciente).State = EntityState.Deleted;
+    int k = db.SaveChanges();
+    return k == 0 ? Results.Problem() : Results.Ok("Paciente Eliminado");
 });
-*/
-
 
 //mostrar pacientes
 app.MapGet("/app/pacientes", () =>
@@ -94,6 +89,23 @@ app.MapPut("/app/pacientes/edit", (Paciente paciente) =>
     return Results.Ok(lista);
 });
 
+//editar la dieta
+app.MapPut("/app/dieta/edit", (DietaOriginal dieta) =>
+{
+    {
+        System.Console.WriteLine(dieta.Id);
+        medical_dietContext db = new medical_dietContext();
+        var dietaa2 = db.DietaOriginals.FirstOrDefault(p => p.Id == dieta.Id);
+        System.Console.WriteLine(dietaa2);
+        dietaa2.Nombre = dieta.Nombre;
+        dietaa2.Descripcion = dieta.Descripcion;
+        dietaa2.Categoria = dieta.Categoria;
+        db.Entry(dietaa2).State = EntityState.Modified;
+        int element = db.SaveChanges();
+        var lista = db.DietaOriginals.ToList();
+        return Results.Ok(lista);
+    }
+});
 
 //añadir citas
 app.MapPost("/app/citas/add", (Citum citum) =>
@@ -140,27 +152,6 @@ app.MapGet("/app/dietas", () =>
     return Results.Ok(k);
 });
 
-//crear informacion nutricional... tabla ingredientes_dieta
-app.MapPost("/app/infonutri/add", (IngredienteDietum infonutri) =>
-{
-    medical_dietContext db = new medical_dietContext();
-    db.IngredienteDieta.Add(infonutri);
-    int n = db.SaveChanges();
-    if (n > 0)
-        return Results.Accepted("informacion nutricional agregada");
-    else
-        return Results.Problem();
-});
-
-//eliminar por id, informacion nutricional... tabla ingredientes_dieta
-app.MapDelete("/app/infonutri/eliminar/{id:int}", (int id) =>
-{
-    medical_dietContext db = new medical_dietContext();
-    var infonutri = new IngredienteDietum { Id = id };
-    db.Entry(infonutri).State = EntityState.Deleted;
-    int k = db.SaveChanges();
-    return k == 0 ? Results.Problem() : Results.Ok("Informacion Nutricional eliminada!");
-});
 
 //mostrar ingredientes
 app.MapGet("/app/mostrarIngredientes", () =>
@@ -198,5 +189,64 @@ app.MapPut("/app/actEstado/profesional", (Profesional profesional) =>
     var lista = db.Profesionals.ToList();
     return Results.Ok(lista);
 });
+
+//add ingre_dieta
+app.MapPost("/app/ingrediente0/add", (Ingrediente ingrediente) =>
+{
+    medical_dietContext db = new medical_dietContext();
+    db.Ingredientes.Add(ingrediente);
+    int n = db.SaveChanges();
+    if (n > 0)
+        return Results.Accepted("ingrediente agregado");
+    else
+        return Results.Problem();
+});
+
+
+//crear informacion nutricional... tabla ingredientes_dieta
+app.MapPost("/app/infonutri/add", (IngredienteDietum infonutri) =>
+{
+    medical_dietContext db = new medical_dietContext();
+    db.IngredienteDieta.Add(infonutri);
+    int n = db.SaveChanges();
+    if (n > 0)
+        return Results.Accepted("Informacion nutricional agregada");
+    else
+        return Results.Problem();
+});
+
+//eliminar por id, informacion nutricional... tabla ingredientes_dieta
+app.MapDelete("/app/infonutri/eliminar/{id:int}", (int id) =>
+{
+    medical_dietContext db = new medical_dietContext();
+    var infonutri = new IngredienteDietum { Id = id };
+    db.Entry(infonutri).State = EntityState.Deleted;
+    int k = db.SaveChanges();
+    return k == 0 ? Results.Problem() : Results.Ok("Informacion Nutricional eliminada!");
+});
+
+//editar informacion nutriciconal
+app.MapPut("/app/infonutri/edit", (IngredienteDietum infonutri) =>
+{
+    System.Console.WriteLine(infonutri.Id);
+    medical_dietContext db = new medical_dietContext();
+    var infonutrii = db.IngredienteDieta.FirstOrDefault(p => p.Id == infonutri.Id);
+    infonutrii.Porciones = infonutri.Porciones;
+    System.Console.WriteLine(infonutrii);
+    db.Entry(infonutrii).State = EntityState.Modified;
+    int element = db.SaveChanges();
+    var lista = db.IngredienteDieta.ToList();
+    return Results.Ok(lista);
+});
+
+//ver infonutri
+app.MapGet("/app/ver/infonutri", () =>
+{
+    medical_dietContext db = new medical_dietContext();
+    var k = db.IngredienteDieta.ToList();
+    return Results.Ok(k);
+});
+
+
 
 app.Run();
